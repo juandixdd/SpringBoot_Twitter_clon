@@ -1,6 +1,6 @@
 package com.example.twitter.clone.ApiExceptionHandler;
 
-import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.UserNotFoundException;
+import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,8 +27,8 @@ public class AplicationExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Map<String, String> handleBusinessException(UserNotFoundException ex){
+    @ExceptionHandler(NotFoundException.class)
+    public Map<String, String> handleBusinessException(NotFoundException ex){
 
         Map<String, String> errorMap = new HashMap<>();
 

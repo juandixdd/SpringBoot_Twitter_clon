@@ -1,6 +1,6 @@
 package com.example.twitter.clone.controllers;
 
-import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.UserNotFoundException;
+import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.NotFoundException;
 import com.example.twitter.clone.entities.Tweet;
 import com.example.twitter.clone.services.TweetService;
 import jakarta.validation.Valid;
@@ -24,17 +24,13 @@ public class TweetController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAllTweets() {
-        try {
-            List<Tweet> tweets = tweetService.findAll();
-            return ResponseEntity.status(HttpStatus.OK).body(tweets);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Error al obtener todos los tweets.\"}");
-        }
+    public ResponseEntity<?> getAllTweets() throws NotFoundException {
+        List<Tweet> tweets = tweetService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(tweets);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOneTweet(@PathVariable Long id) throws UserNotFoundException {
+    public ResponseEntity<?> getOneTweet(@PathVariable Long id) throws NotFoundException {
         Tweet tweet = tweetService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(tweet);
     }
@@ -46,27 +42,21 @@ public class TweetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTweet(@PathVariable Long id, @RequestBody Tweet tweet) {
-        try {
-            Tweet updatedTweet = tweetService.update(id, tweet);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedTweet);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error al actualizar el tweet con el ID proporcionado.\"}");
-        }
+    public ResponseEntity<?> updateTweet(@Valid @PathVariable Long id, @RequestBody Tweet tweet) throws NotFoundException {
+        Tweet updatedTweet = tweetService.update(id, tweet);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedTweet);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTweet(@PathVariable Long id) {
-        try {
-            boolean deleted = tweetService.delete(id);
-            if (deleted) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"No se encontró ningún tweet con el ID proporcionado.\"}");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Error al eliminar el tweet.\"}");
+    public ResponseEntity<?> deleteTweet(@PathVariable Long id) throws Exception {
+
+        boolean deleted = tweetService.delete(id);
+        if (deleted) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"No se encontró ningún tweet con el ID proporcionado.\"}");
         }
+
     }
 }
 

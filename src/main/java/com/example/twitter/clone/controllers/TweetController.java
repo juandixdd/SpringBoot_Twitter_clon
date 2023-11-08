@@ -48,15 +48,9 @@ public class TweetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTweet(@PathVariable Long id) throws Exception {
-
-        boolean deleted = tweetService.delete(id);
-        if (deleted) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"No se encontró ningún tweet con el ID proporcionado.\"}");
-        }
-
+    public ResponseEntity<?> deleteTweet(@PathVariable Long id) throws NotFoundException {
+        Tweet deletedTweet = tweetService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(deletedTweet);
     }
 }
 

@@ -66,16 +66,20 @@ public class TweetService implements GlobalService<Tweet> {
 
     @Override
     @Transactional
-    public boolean delete(Long id) throws Exception {
-        if (tweetRepository.existsById(id)) {
+    public Tweet delete(Long id) throws NotFoundException {
+        Optional<Tweet> existingTweet = tweetRepository.findById(id);
+
+        if (existingTweet.isPresent()) {
             try {
+                Tweet deletedTweet = existingTweet.get();
                 tweetRepository.deleteById(id);
-                return true;
+
+                return deletedTweet;
             } catch (Exception e) {
-                throw new Exception("Error al eliminar el tweet con el ID: " + id);
+                throw new RuntimeException("Error al eliminar el tweet con ID: " + id);
             }
         } else {
-            throw new Exception("No se encontró ningún tweet con el ID: " + id);
+            throw new NotFoundException("No se encontró ningún tweet con el ID: " + id);
         }
     }
 }

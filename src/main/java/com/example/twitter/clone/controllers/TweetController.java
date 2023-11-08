@@ -1,7 +1,9 @@
 package com.example.twitter.clone.controllers;
 
+import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.UserNotFoundException;
 import com.example.twitter.clone.entities.Tweet;
 import com.example.twitter.clone.services.TweetService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,21 +34,15 @@ public class TweetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOneTweet(@PathVariable Long id) {
-
-            Tweet tweet = tweetService.findById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(tweet);
-
+    public ResponseEntity<?> getOneTweet(@PathVariable Long id) throws UserNotFoundException {
+        Tweet tweet = tweetService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(tweet);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> saveTweet(@RequestBody Tweet tweet) {
-        try {
-            Tweet savedTweet = tweetService.save(tweet);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedTweet);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Error al guardar el tweet.\"}");
-        }
+    public ResponseEntity<?> saveTweet(@Valid @RequestBody Tweet tweet) {
+        Tweet savedTweet = tweetService.save(tweet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTweet);
     }
 
     @PutMapping("/{id}")

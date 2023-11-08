@@ -1,5 +1,6 @@
 package com.example.twitter.clone.services;
 
+import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.UserNotFoundException;
 import com.example.twitter.clone.entities.Tweet;
 import com.example.twitter.clone.repositories.TweetRepository;
 import jakarta.transaction.Transactional;
@@ -29,13 +30,11 @@ public class TweetService implements GlobalService<Tweet> {
 
     @Override
     @Transactional
-    public Tweet findById(Long id) {
-        try {
-            Optional<Tweet> tweetOptional = tweetRepository.findById(id);
-            return tweetOptional.orElseThrow(() -> new RuntimeException("No se encontró ningún tweet con el ID: " + id));
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar el tweet con ID " + id + ": " + e.getMessage());
-        }
+    public Tweet findById(Long id) throws UserNotFoundException {
+
+        Optional<Tweet> tweetOptional = tweetRepository.findById(id);
+        return tweetOptional.orElseThrow(() -> new UserNotFoundException("No se encontró ningún tweet con el ID: " + id));
+
     }
 
     @Override

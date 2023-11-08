@@ -47,6 +47,7 @@ public class TweetService implements GlobalService<Tweet> {
         }
     }
 
+    @Override
     @Transactional
     public Tweet update(Long id, Tweet tweet) throws NotFoundException {
         Optional<Tweet> existingTweet = tweetRepository.findById(id);

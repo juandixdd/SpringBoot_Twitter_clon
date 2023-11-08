@@ -1,6 +1,7 @@
 package com.example.twitter.clone.ApiExceptionHandler;
 
 import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.NotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,18 @@ public class AplicationExceptionHandler {
 
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             errorMap.put(error.getField(), error.getDefaultMessage());
+        });
+
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, String> handleInvalidArgument(ConstraintViolationException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(error -> {
+            errorMap.put(error.getPropertyPath().toString(), error.getMessage());
         });
 
         return errorMap;

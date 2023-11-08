@@ -2,6 +2,7 @@ package com.example.twitter.clone.controllers;
 
 import com.example.twitter.clone.entities.Tweet;
 import com.example.twitter.clone.services.TweetService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "tweets")
 public class TweetController {
+
+    @Autowired
     private final TweetService tweetService;
 
     public TweetController(TweetService tweetService) {
@@ -19,7 +22,7 @@ public class TweetController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAllTweets() {
         try {
             List<Tweet> tweets = tweetService.findAll();
             return ResponseEntity.status(HttpStatus.OK).body(tweets);
@@ -29,17 +32,15 @@ public class TweetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id) {
-        try {
+    public ResponseEntity<?> getOneTweet(@PathVariable Long id) {
+
             Tweet tweet = tweetService.findById(id);
             return ResponseEntity.status(HttpStatus.OK).body(tweet);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Tweet no encontrado con el ID proporcionado.\"}");
-        }
+
     }
 
     @PostMapping("")
-    public ResponseEntity<?> save(@RequestBody Tweet tweet) {
+    public ResponseEntity<?> saveTweet(@RequestBody Tweet tweet) {
         try {
             Tweet savedTweet = tweetService.save(tweet);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedTweet);
@@ -49,7 +50,7 @@ public class TweetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Tweet tweet) {
+    public ResponseEntity<?> updateTweet(@PathVariable Long id, @RequestBody Tweet tweet) {
         try {
             Tweet updatedTweet = tweetService.update(id, tweet);
             return ResponseEntity.status(HttpStatus.OK).body(updatedTweet);
@@ -59,7 +60,7 @@ public class TweetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> deleteTweet(@PathVariable Long id) {
         try {
             boolean deleted = tweetService.delete(id);
             if (deleted) {

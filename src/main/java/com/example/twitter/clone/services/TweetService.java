@@ -2,7 +2,7 @@ package com.example.twitter.clone.services;
 
 import com.example.twitter.clone.ApiExceptionHandler.CustomExceptions.NotFoundException;
 import com.example.twitter.clone.entities.Tweet;
-import com.example.twitter.clone.repositories.TweetRepository;
+import com.example.twitter.clone.repositories.TwitterClonRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +13,17 @@ import java.util.Optional;
 public class TweetService implements GlobalService<Tweet> {
 
 
-    private final TweetRepository tweetRepository;
+    private final TwitterClonRepository twitterClonRepository;
 
-    public TweetService(TweetRepository tweetRepository) {
-        this.tweetRepository = tweetRepository;
+    public TweetService(TwitterClonRepository twitterClonRepository) {
+        this.twitterClonRepository = twitterClonRepository;
     }
 
     @Override
     @Transactional
     public List<Tweet> findAll() throws NotFoundException {
         try {
-            return tweetRepository.findAll();
+            return twitterClonRepository.findAll();
         } catch (Exception e) {
             throw new NotFoundException("Error al buscar todos los tweets: " + e.getMessage());
         }
@@ -33,7 +33,7 @@ public class TweetService implements GlobalService<Tweet> {
     @Transactional
     public Tweet findById(Long id) throws NotFoundException {
 
-        Optional<Tweet> tweetOptional = tweetRepository.findById(id);
+        Optional<Tweet> tweetOptional = twitterClonRepository.findById(id);
         return tweetOptional.orElseThrow(() -> new NotFoundException("No se encontró ningún tweet con el ID: " + id));
     }
 
@@ -41,7 +41,7 @@ public class TweetService implements GlobalService<Tweet> {
     @Transactional
     public Tweet save(Tweet tweet) {
         try {
-            return tweetRepository.save(tweet);
+            return twitterClonRepository.save(tweet);
         } catch (Exception e) {
             throw new RuntimeException("Error al guardar el tweet: " + e.getMessage());
         }
@@ -50,12 +50,12 @@ public class TweetService implements GlobalService<Tweet> {
     @Override
     @Transactional
     public Tweet update(Long id, Tweet tweet) throws NotFoundException {
-        Optional<Tweet> existingTweet = tweetRepository.findById(id);
+        Optional<Tweet> existingTweet = twitterClonRepository.findById(id);
 
         if (existingTweet.isPresent()) {
             tweet.setId(id);
             try {
-                return tweetRepository.save(tweet);
+                return twitterClonRepository.save(tweet);
             } catch (Exception e) {
                 throw new RuntimeException("Error al actualizar el tweet con ID: " + id);
             }
@@ -67,12 +67,12 @@ public class TweetService implements GlobalService<Tweet> {
     @Override
     @Transactional
     public Tweet delete(Long id) throws NotFoundException {
-        Optional<Tweet> existingTweet = tweetRepository.findById(id);
+        Optional<Tweet> existingTweet = twitterClonRepository.findById(id);
 
         if (existingTweet.isPresent()) {
             try {
                 Tweet deletedTweet = existingTweet.get();
-                tweetRepository.deleteById(id);
+                twitterClonRepository.deleteById(id);
 
                 return deletedTweet;
             } catch (Exception e) {
